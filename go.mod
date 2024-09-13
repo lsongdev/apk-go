@@ -1,3 +1,3 @@
-module github.com/shogo82148/androidbinary
+module github.com/lsongdev/apk-go
 
-go 1.17
+go 1.22.4

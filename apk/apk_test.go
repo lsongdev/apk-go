@@ -7,7 +7,7 @@ import (
 )
 
 func TestParseAPKFile(t *testing.T) {
-	apk, err := OpenFile("testdata/helloworld.apk")
+	apk, err := Open("testdata/helloworld.apk")
 	if err != nil {
 		t.Errorf("OpenFile error: %v", err)
 	}

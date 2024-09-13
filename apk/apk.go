@@ -8,10 +8,10 @@ import (
 	"io"
 	"os"
 
-	"github.com/shogo82148/androidbinary"
-
 	_ "image/jpeg" // handle jpeg format
 	_ "image/png"  // handle png format
+
+	"github.com/lsongdev/apk-go/binary"
 )
 
 // Apk is an application package file for android.
@@ -19,11 +19,11 @@ type Apk struct {
 	f         *os.File
 	zipreader *zip.Reader
 	manifest  Manifest
-	table     *androidbinary.TableFile
+	table     *binary.TableFile
 }
 
 // OpenFile will open the file specified by filename and return Apk
-func OpenFile(filename string) (apk *Apk, err error) {
+func Open(filename string) (apk *Apk, err error) {
 	f, err := os.Open(filename)
 	if err != nil {
 		return nil, err
@@ -72,12 +72,12 @@ func (k *Apk) Close() error {
 }
 
 // Icon returns the icon image of the APK.
-func (k *Apk) Icon(resConfig *androidbinary.ResTableConfig) (image.Image, error) {
+func (k *Apk) Icon(resConfig *binary.ResTableConfig) (image.Image, error) {
 	iconPath, err := k.manifest.App.Icon.WithResTableConfig(resConfig).String()
 	if err != nil {
 		return nil, err
 	}
-	if androidbinary.IsResID(iconPath) {
+	if binary.IsResID(iconPath) {
 		return nil, newError("unable to convert icon-id to icon path")
 	}
 	imgData, err := k.readZipFile(iconPath)
@@ -89,12 +89,12 @@ func (k *Apk) Icon(resConfig *androidbinary.ResTableConfig) (image.Image, error)
 }
 
 // Label returns the label of the APK.
-func (k *Apk) Label(resConfig *androidbinary.ResTableConfig) (s string, err error) {
+func (k *Apk) Label(resConfig *binary.ResTableConfig) (s string, err error) {
 	s, err = k.manifest.App.Label.WithResTableConfig(resConfig).String()
 	if err != nil {
 		return
 	}
-	if androidbinary.IsResID(s) {
+	if binary.IsResID(s) {
 		err = newError("unable to convert label-id to string")
 	}
 	return
@@ -158,7 +158,7 @@ func (k *Apk) parseManifest() error {
 	if err != nil {
 		return errorf("failed to read AndroidManifest.xml: %w", err)
 	}
-	xmlfile, err := androidbinary.NewXMLFile(bytes.NewReader(xmlData))
+	xmlfile, err := binary.NewXMLFile(bytes.NewReader(xmlData))
 	if err != nil {
 		return errorf("failed to parse AndroidManifest.xml: %w", err)
 	}
@@ -170,7 +170,7 @@ func (k *Apk) parseResources() (err error) {
 	if err != nil {
 		return
 	}
-	k.table, err = androidbinary.NewTableFile(bytes.NewReader(resData))
+	k.table, err = binary.NewTableFile(bytes.NewReader(resData))
 	return
 }
 

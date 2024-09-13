@@ -1,17 +1,17 @@
-package androidbinary_test
+package main
 
 import (
 	"encoding/xml"
 	"fmt"
 	"os"
 
-	"github.com/shogo82148/androidbinary"
-	"github.com/shogo82148/androidbinary/apk"
+	"github.com/lsongdev/apk-go/apk"
+	"github.com/lsongdev/apk-go/binary"
 )
 
 func ExampleNewXMLFile() {
 	f, _ := os.Open("testdata/AndroidManifest.xml")
-	xmlFile, err := androidbinary.NewXMLFile(f)
+	xmlFile, err := binary.NewXMLFile(f)
 	if err != nil {
 		panic(err)
 	}
@@ -53,12 +53,12 @@ func ExampleNewTableFile() {
 	if err != nil {
 		panic(err)
 	}
-	tableFile, err := androidbinary.NewTableFile(f)
+	tableFile, err := binary.NewTableFile(f)
 	if err != nil {
 		panic(err)
 	}
 
-	val, err := tableFile.GetResource(0x7f040000, &androidbinary.ResTableConfig{})
+	val, err := tableFile.GetResource(0x7f040000, &binary.ResTableConfig{})
 	if err != nil {
 		panic(err)
 	}
